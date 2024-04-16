@@ -5,7 +5,7 @@ Vanilla (**JavaScript**)-only
 #### Screenshot
 ![Todo-App](image.png)
 
-
+#### App Link: https://abhishek-bisht-21.github.io/Todo-VanilaJS/
 
 ## Synopsis
 
