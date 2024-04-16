@@ -18,25 +18,53 @@ todoInputBar.addEventListener("keyup", function toggleSaveBtn() {
 saveButton.addEventListener("click", function getTextAndAddTodo() {
 	let todoText = todoInputBar.value;
 	if (todoText.length == 0) return;
-	todos.push(todoText);
-	addTodo(todoText, todos.length);
+	let todo = { text: todoText, status: 'In Progress', finishButtonText: 'Finished' };
+	todos.push(todo);
+	addTodo(todo, todos.length);
 	todoInputBar.value = "";
 	saveButton.classList.add("disabled");
 });
 
-function removeTodo(event){
-
-	let deleteButtonPressed = event.target;
-	let indexTobeRemoved = Number(deleteButtonPressed.getAttribute("todo-idx"));
-	todos.splice(indexTobeRemoved, 1)
+function reRenderTodos() {
 	todoDataList.innerHTML = '';
 	todos.forEach((element, idx) => {
-		addTodo(element, idx+1);
+		addTodo(element, idx + 1);
 	});
 }
 
+function removeTodo(event) {
 
-function addTodo(todoData, todoCount) {
+	let deleteButtonPressed = event.target;
+	let indexTobeRemoved = Number(deleteButtonPressed.getAttribute("todo-idx"));
+	todos.splice(indexTobeRemoved, 1);
+	reRenderTodos();
+}
+
+function finishTodo(event) {
+	let finishedButtonPressed = event.target;
+	let indexTobeFinised = Number(finishedButtonPressed.getAttribute("todo-idx"));
+
+	//toggle
+	if (todos[indexTobeFinised].status == "Finished") {
+		todos[indexTobeFinised].status = "In Progress";
+		todos[indexTobeFinised].finishButtonText = "Finished";
+	} else {
+		todos[indexTobeFinised].status = "Finished";
+		todos[indexTobeFinised].finishButtonText = "Undo";
+	}
+
+	todos.sort((a, b) => {
+		if (a.status == 'Finished') {
+			return 1;
+		}
+		return -1;
+	});
+
+	reRenderTodos();
+}
+
+
+function addTodo(todo, todoCount) {
 	let rowDiv = document.createElement("div");
 	let todoItem = document.createElement("div");
 	let todoNumber = document.createElement("div");
@@ -57,14 +85,16 @@ function addTodo(todoData, todoCount) {
 	deleteButton.classList.add("btn", "btn-danger", "delete-todo");
 	finishedButton.classList.add("btn", "btn-success", "finished-todo");
 
-	deleteButton.setAttribute("todo-idx", todoCount-1);
+	finishedButton.setAttribute("todo-idx", todoCount - 1);
+	deleteButton.setAttribute("todo-idx", todoCount - 1);
 	deleteButton.onclick = removeTodo;
+	finishedButton.onclick = finishTodo;
 
 	todoNumber.textContent = `${todoCount}.`;
-	todoDetail.textContent = todoData; // sets the todo text sent from the input element
-	todoStatus.textContent = "In Progress";
+	todoDetail.textContent = todo.text; // sets the todo text sent from the input element
+	todoStatus.textContent = todo.status;
 	deleteButton.textContent = "Delete";
-	finishedButton.textContent = "Finished";
+	finishedButton.textContent = todo.finishButtonText;
 
 	todoActions.appendChild(deleteButton);
 	todoActions.appendChild(finishedButton);
