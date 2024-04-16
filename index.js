@@ -1,13 +1,6 @@
-// let getTodosButton = document.getElementById('get-todos');
-// let todoDetails = document.getElementsByClassName('todo-detail');
-
-// // registration of event listener
-// getTodosButton.addEventListener("click", () => {
-// 	console.log("clicked");
-// })
-
 let todos = [];
 
+let todoDataList = document.getElementById("todo-data-list");
 let todoDataSection = document.getElementById("todo-data");
 let saveButton = document.getElementById("save-todo");
 let todoInputBar = document.getElementById("todo-input-bar");
@@ -31,6 +24,17 @@ saveButton.addEventListener("click", function getTextAndAddTodo() {
 	saveButton.classList.add("disabled");
 });
 
+function removeTodo(event){
+
+	let deleteButtonPressed = event.target;
+	let indexTobeRemoved = Number(deleteButtonPressed.getAttribute("todo-idx"));
+	todos.splice(indexTobeRemoved, 1)
+	todoDataList.innerHTML = '';
+	todos.forEach((element, idx) => {
+		addTodo(element, idx+1);
+	});
+}
+
 
 function addTodo(todoData, todoCount) {
 	let rowDiv = document.createElement("div");
@@ -50,10 +54,11 @@ function addTodo(todoData, todoCount) {
 	todoDetail.classList.add("todo-detail", "text-muted");
 	todoStatus.classList.add("todo-status", "text-muted");
 	todoActions.classList.add("todo-actions", "d-flex", "justify-content-start", "gap-2");
-	deleteButton.classList.add("btn", "btn-danger");
-	finishedButton.classList.add("btn", "btn-success");
+	deleteButton.classList.add("btn", "btn-danger", "delete-todo");
+	finishedButton.classList.add("btn", "btn-success", "finished-todo");
 
-
+	deleteButton.setAttribute("todo-idx", todoCount-1);
+	deleteButton.onclick = removeTodo;
 
 	todoNumber.textContent = `${todoCount}.`;
 	todoDetail.textContent = todoData; // sets the todo text sent from the input element
@@ -72,6 +77,6 @@ function addTodo(todoData, todoCount) {
 	rowDiv.appendChild(todoItem);
 	rowDiv.appendChild(hr);
 
-	todoDataSection.appendChild(rowDiv);
+	todoDataList.appendChild(rowDiv);
 
 }
